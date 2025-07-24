@@ -114,6 +114,9 @@
       }
 
       $('<div>').attr('id', 'locationSlider').appendTo('#main');
+      if (typeof Effects !== 'undefined') {
+        Effects.init();
+      }
 
       var menu = $('<div>')
         .addClass('menu')

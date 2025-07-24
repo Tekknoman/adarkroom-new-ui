@@ -598,8 +598,11 @@ var Room = {
 
 	options: {}, // Nothing for now
 
-	onArrival: function (transition_diff) {
-		Room.setTitle();
+        onArrival: function (transition_diff) {
+                if (typeof Effects !== 'undefined') {
+                        Effects.setScene('room');
+                }
+                Room.setTitle();
 		if (Room.changed) {
 			Notifications.notify(Room, _("the fire is {0}", Room.FireEnum.fromInt($SM.get('game.fire.value')).text));
 			Notifications.notify(Room, _("the room is {0}", Room.TempEnum.fromInt($SM.get('game.temperature.value')).text));
@@ -712,11 +715,14 @@ var Room = {
 		if (wood > 0) {
 			$SM.set('stores.wood', wood - 1);
 		}
-		if ($SM.get('game.fire.value') < 4) {
-			$SM.set('game.fire', Room.FireEnum.fromInt($SM.get('game.fire.value') + 1));
-		}
-		AudioEngine.playSound(AudioLibrary.STOKE_FIRE);
-		Room.onFireChange();
+                if ($SM.get('game.fire.value') < 4) {
+                        $SM.set('game.fire', Room.FireEnum.fromInt($SM.get('game.fire.value') + 1));
+                }
+                AudioEngine.playSound(AudioLibrary.STOKE_FIRE);
+                if (typeof Effects !== 'undefined') {
+                        Effects.sparkBurst();
+                }
+                Room.onFireChange();
 	},
 
 	onFireChange: function () {
