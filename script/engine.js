@@ -164,6 +164,12 @@
         .appendTo(menu);
 
       $('<span>')
+        .addClass('particles menuBtn')
+        .click(Engine.cycleParticles)
+        .appendTo(menu);
+      Engine.updateParticlesButton();
+
+      $('<span>')
         .addClass('hyper menuBtn')
         .text(_('hyper.'))
         .click(Engine.confirmHyperMode)
@@ -243,6 +249,11 @@
 
       if($SM.get('config.hyperMode', true)){
         Engine.triggerHyperMode();
+      }
+
+      Engine.updateParticlesButton();
+      if (typeof Effects !== 'undefined' && Effects.updateIntensity) {
+        Effects.updateIntensity();
       }
 
       Engine.toggleVolume(Boolean($SM.get('config.soundOn')));
@@ -832,6 +843,24 @@
         $SM.set('config.soundOn', true);
         AudioEngine.setMasterVolume(1.0);
       }
+    },
+
+    updateParticlesButton: function(){
+      var lvl = $SM.get('config.particleIntensity', true);
+      if (lvl == null || lvl === undefined) lvl = 2;
+      var labels = ['off', 'low', 'med', 'high'];
+      $('.particles').text(_('particles ' + labels[lvl] + '.'));
+    },
+
+    cycleParticles: function(){
+      var lvl = $SM.get('config.particleIntensity', true);
+      if (lvl == null || lvl === undefined) lvl = 2;
+      lvl = (lvl + 1) % 4;
+      $SM.set('config.particleIntensity', lvl);
+      if (typeof Effects !== 'undefined' && Effects.updateIntensity) {
+        Effects.updateIntensity();
+      }
+      Engine.updateParticlesButton();
     },
 
     setInterval: function(callback, interval, skipDouble){

@@ -50,13 +50,36 @@ body.flash {
   background-size: cover;
 }
 
+#background::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  font-size: 35vw;
+  line-height: 1;
+  color: var(--accent-color);
+  opacity: 0.05;
+  pointer-events: none;
+}
+
 body.scene-room #background {
   background: radial-gradient(circle at bottom, rgba(255,110,30,0.2), transparent 70%), var(--bg-color);
   animation: flicker 3s infinite;
 }
 
+body.scene-room #background::after {
+  content: "\f06d";
+}
+
 body.scene-forest #background {
   background: linear-gradient(#001a00, var(--bg-color));
+}
+
+body.scene-forest #background::after {
+  content: "\f1bb";
 }
 
 @keyframes flicker {
