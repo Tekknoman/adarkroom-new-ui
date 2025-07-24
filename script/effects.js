@@ -1,5 +1,6 @@
 var Effects = {
     particleIntensity: 2,
+    idleTimer: null,
 
     init: function() {
         if (!document.getElementById('background')) {
@@ -8,6 +9,7 @@ var Effects = {
             document.body.prepend(bg);
         }
         this.updateIntensity();
+        this.startIdle();
     },
 
     updateIntensity: function() {
@@ -15,6 +17,7 @@ var Effects = {
             var lvl = $SM.get('config.particleIntensity', true);
             if (typeof lvl === 'number') this.particleIntensity = lvl;
         }
+        this.startIdle();
     },
 
     setScene: function(scene) {
@@ -36,6 +39,29 @@ var Effects = {
             s.style.animationDelay = (Math.random() * 0.3) + 's';
             bg.appendChild(s);
             (function(el){ setTimeout(function(){ el.remove(); }, 800); })(s);
+        }
+    },
+
+    idleParticle: function(){
+        var bg = document.getElementById('background');
+        if(!bg) return;
+        var p = document.createElement('div');
+        p.className = 'idleParticle';
+        p.style.left = (Math.random() * 100) + '%';
+        p.style.top = (Math.random() * 100) + '%';
+        bg.appendChild(p);
+        setTimeout(function(){ p.remove(); }, 4000);
+    },
+
+    startIdle: function(){
+        if(this.idleTimer){
+            clearInterval(this.idleTimer);
+            this.idleTimer = null;
+        }
+        if(this.particleIntensity > 0){
+            var delay = 4000 / this.particleIntensity;
+            var self = this;
+            this.idleTimer = setInterval(function(){ self.idleParticle(); }, delay);
         }
     }
 };
