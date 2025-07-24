@@ -1,0 +1,40 @@
+:root {
+  --bg-color: #121212;
+  --fg-color: #e0e0e0;
+  --accent-color: #bb86fc;
+  --panel-bg: #1e1e1e;
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--fg-color);
+  font-family: 'Roboto', sans-serif;
+}
+
+.logo-icon > path {
+  stroke: var(--fg-color);
+}
+
+.headerButton {
+  color: var(--accent-color);
+}
+
+div#notifications div.notification {
+  background: rgba(187, 134, 252, 0.1);
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+body.flash {
+  animation: flash-bg 0.5s ease;
+}
+
+@keyframes flash-bg {
+  0% { background-color: var(--bg-color); }
+  50% { background-color: rgba(187,134,252,0.2); }
+  100% { background-color: var(--bg-color); }
+}
+
+#resources .row_key i {
+  margin-right: 4px;
+}

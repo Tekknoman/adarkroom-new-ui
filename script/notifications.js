@@ -61,11 +61,14 @@ var Notifications = {
 	},
 	
 	printMessage: function(t) {
-		var text = $('<div>').addClass('notification').css('opacity', '0').text(t).prependTo('div#notifications');
-		text.animate({opacity: 1}, 500, 'linear', function() {
-			// Do this every time we add a new message, this way we never have a large backlog to iterate through. Keeps things faster.
-			Notifications.clearHidden();
-		});
+                var text = $('<div>').addClass('notification').css('opacity', '0').text(t).prependTo('div#notifications');
+                text.animate({opacity: 1}, 500, 'linear', function() {
+                        Notifications.clearHidden();
+                });
+                $('body').addClass('flash').delay(500).queue(function(){
+                        $(this).removeClass('flash');
+                        $(this).dequeue();
+                });
 	},
 	
 	printQueue: function(module) {
