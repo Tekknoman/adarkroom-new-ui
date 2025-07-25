@@ -8,8 +8,23 @@ var Room = {
 	_BUILDER_STATE_DELAY: 0.5 * 60 * 1000, // time between builder state updates
 	_STOKE_COOLDOWN: 10, // cooldown to stoke the fire
 	_NEED_WOOD_DELAY: 15 * 1000, // from when the stranger shows up, to when you need wood
-	buttons: {},
-	Craftables: {
+        buttons: {},
+
+        ResourceIcons: {
+                'wood': 'fa-tree',
+                'meat': 'fa-drumstick-bite',
+                'fur': 'fa-paw',
+                'leather': 'fa-scroll',
+                'bait': 'fa-bug',
+                'medicine': 'fa-prescription-bottle',
+                'meat jerky': 'fa-bacon'
+        },
+
+        getResourceIconClass: function(res) {
+                return this.ResourceIcons[res] || 'fa-cube';
+        },
+
+        Craftables: {
 		'trap': {
 			name: _('trap'),
 			button: null,
@@ -583,8 +598,11 @@ var Room = {
 
 	options: {}, // Nothing for now
 
-	onArrival: function (transition_diff) {
-		Room.setTitle();
+        onArrival: function (transition_diff) {
+                if (typeof Effects !== 'undefined') {
+                        Effects.setScene('room');
+                }
+                Room.setTitle();
 		if (Room.changed) {
 			Notifications.notify(Room, _("the fire is {0}", Room.FireEnum.fromInt($SM.get('game.fire.value')).text));
 			Notifications.notify(Room, _("the room is {0}", Room.TempEnum.fromInt($SM.get('game.temperature.value')).text));
@@ -697,11 +715,14 @@ var Room = {
 		if (wood > 0) {
 			$SM.set('stores.wood', wood - 1);
 		}
-		if ($SM.get('game.fire.value') < 4) {
-			$SM.set('game.fire', Room.FireEnum.fromInt($SM.get('game.fire.value') + 1));
-		}
-		AudioEngine.playSound(AudioLibrary.STOKE_FIRE);
-		Room.onFireChange();
+                if ($SM.get('game.fire.value') < 4) {
+                        $SM.set('game.fire', Room.FireEnum.fromInt($SM.get('game.fire.value') + 1));
+                }
+                AudioEngine.playSound(AudioLibrary.STOKE_FIRE);
+                if (typeof Effects !== 'undefined') {
+                        Effects.sparkBurst();
+                }
+                Room.onFireChange();
 	},
 
 	onFireChange: function () {
@@ -877,8 +898,10 @@ var Room = {
 			}
 
 			if (row.length === 0) {
-				row = $('<div>').attr('id', id).addClass('storeRow');
-				$('<div>').addClass('row_key').text(lk).appendTo(row);
+                                row = $('<div>').attr('id', id).addClass('storeRow');
+                                var keyDiv = $('<div>').addClass('row_key');
+                                $('<i>').addClass('fa-solid ' + Room.getResourceIconClass(k)).appendTo(keyDiv);
+                                keyDiv.append(' ' + lk).appendTo(row);
 				$('<div>').addClass('row_val').text(Math.floor(num)).appendTo(row);
 				$('<div>').addClass('clear').appendTo(row);
 				var curPrev = null;
@@ -948,7 +971,9 @@ var Room = {
 				var income = $SM.get('income["' + incomeSource + '"]');
 				for (var store in income.stores) {
 					if (store == storeName && income.stores[store] !== 0) {
-						$('<div>').addClass('row_key').text(_(incomeSource)).appendTo(tt);
+                                                var ik = $('<div>').addClass('row_key');
+                                                $('<i>').addClass('fa-solid ' + Room.getResourceIconClass(incomeSource)).appendTo(ik);
+                                                ik.append(' ' + _(incomeSource)).appendTo(tt);
 						$('<div>')
 							.addClass('row_val')
 							.text(Engine.getIncomeMsg(income.stores[store], income.delay))
@@ -963,7 +988,9 @@ var Room = {
 			}
 			if (tt.children().length > 0) {
 				var total = totalIncome[storeName].income;
-				$('<div>').addClass('total row_key').text(_('total')).appendTo(tt);
+                                var totk = $('<div>').addClass('total row_key');
+                                $('<i>').addClass('fa-solid fa-sack-dollar').appendTo(totk);
+                                totk.append(' ' + _('total')).appendTo(tt);
 				$('<div>').addClass('total row_val').text(Engine.getIncomeMsg(total, totalIncome[storeName].delay)).appendTo(tt);
 				tt.appendTo(el);
 			}
@@ -1157,7 +1184,9 @@ var Room = {
 				costTooltip.empty();
 				var cost = craftable.cost();
 				for (var c in cost) {
-					$("<div>").addClass('row_key').text(_(c)).appendTo(costTooltip);
+                                        var ck = $('<div>').addClass('row_key');
+                                        $('<i>').addClass('fa-solid ' + Room.getResourceIconClass(c)).appendTo(ck);
+                                        ck.append(' ' + _(c)).appendTo(costTooltip);
 					$("<div>").addClass('row_val').text(cost[c]).appendTo(costTooltip);
 				}
 				if (max && !craftable.button.hasClass('disabled')) {
@@ -1190,9 +1219,11 @@ var Room = {
 				var goodsCostTooltip = $('.tooltip', good.button);
 				goodsCostTooltip.empty();
 				var goodCost = good.cost();
-				for (var gc in goodCost) {
-					$("<div>").addClass('row_key').text(_(gc)).appendTo(goodsCostTooltip);
-					$("<div>").addClass('row_val').text(goodCost[gc]).appendTo(goodsCostTooltip);
+                                for (var gc in goodCost) {
+                                        var gck = $('<div>').addClass('row_key');
+                                        $('<i>').addClass('fa-solid ' + Room.getResourceIconClass(gc)).appendTo(gck);
+                                        gck.append(' ' + _(gc)).appendTo(goodsCostTooltip);
+                                        $("<div>").addClass('row_val').text(goodCost[gc]).appendTo(goodsCostTooltip);
 				}
 				if (goodsMax && !good.button.hasClass('disabled')) {
 					Notifications.notify(Room, good.maxMsg);
@@ -1219,7 +1250,9 @@ var Room = {
 	compassTooltip: function (direction) {
 		var ttPos = $('div#resources').children().length > 10 ? 'top right' : 'bottom right';
 		var tt = $('<div>').addClass('tooltip ' + ttPos);
-		$('<div>').addClass('row_key').text(_('the compass points ' + direction)).appendTo(tt);
+                var compk = $('<div>').addClass('row_key');
+                $('<i>').addClass('fa-solid fa-compass').appendTo(compk);
+                compk.append(' ' + _('the compass points ' + direction)).appendTo(tt);
 		tt.appendTo($('#row_compass'));
 	},
 

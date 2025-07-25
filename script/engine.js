@@ -114,6 +114,9 @@
       }
 
       $('<div>').attr('id', 'locationSlider').appendTo('#main');
+      if (typeof Effects !== 'undefined') {
+        Effects.init();
+      }
 
       var menu = $('<div>')
         .addClass('menu')
@@ -144,43 +147,57 @@
 
       $('<span>')
         .addClass('volume menuBtn')
-        .text(_('sound on.'))
+        .append($('<i>').addClass('fa-solid fa-volume-high'))
+        .append(' ' + _('sound on.'))
         .click(() => Engine.toggleVolume())
         .appendTo(menu);
 
       $('<span>')
         .addClass('appStore menuBtn')
-        .text(_('get the app.'))
+        .append($('<i>').addClass('fa-solid fa-mobile-screen-button'))
+        .append(' ' + _('get the app.'))
         .click(Engine.getApp)
         .appendTo(menu);
 
       $('<span>')
         .addClass('lightsOff menuBtn')
-        .text(_('lights off.'))
+        .append($('<i>').addClass('fa-solid fa-lightbulb'))
+        .append(' ' + _('lights off.'))
         .click(Engine.turnLightsOff)
         .appendTo(menu);
 
       $('<span>')
+        .addClass('particles menuBtn')
+        .append($('<i>').addClass('fa-solid fa-wand-magic-sparkles'))
+        .click(Engine.cycleParticles)
+        .appendTo(menu);
+      Engine.updateParticlesButton();
+
+      $('<span>')
         .addClass('hyper menuBtn')
-        .text(_('hyper.'))
+        .append($('<i>').addClass('fa-solid fa-forward-fast'))
+        .append(' ' + _('hyper.'))
         .click(Engine.confirmHyperMode)
         .appendTo(menu);
 
       $('<span>')
         .addClass('menuBtn')
-        .text(_('restart.'))
+        .append($('<i>').addClass('fa-solid fa-arrow-rotate-left'))
+        .append(' ' + _('restart.'))
         .click(Engine.confirmDelete)
         .appendTo(menu);
 
       $('<span>')
         .addClass('menuBtn')
-        .text(_('share.'))
+        .append($('<i>').addClass('fa-solid fa-share-from-square'))
+        .append(' ' + _('share.'))
         .click(Engine.share)
         .appendTo(menu);
 
       $('<span>')
         .addClass('menuBtn')
-        .text(_('save.'))
+        .append($('<i>').addClass('fa-solid fa-save'))
+        .append(' ' + _('save.'))
         .click(Engine.exportImport)
         .appendTo(menu);
 
@@ -189,14 +206,16 @@
 
         $('<span>')
           .addClass('menuBtn')
-          .text(_('dropbox.'))
+          .append($('<i>').addClass('fa-solid fa-box-open'))
+          .append(' ' + _('dropbox.'))
           .click(Engine.Dropbox.startDropbox)
           .appendTo(menu);
       }
 
       $('<span>')
         .addClass('menuBtn')
-        .text(_('github.'))
+        .append($('<i>').addClass('fa-brands fa-github'))
+        .append(' ' + _('github.'))
         .click(function() { window.open('https://github.com/doublespeakgames/adarkroom'); })
         .appendTo(menu);
 
@@ -240,6 +259,11 @@
 
       if($SM.get('config.hyperMode', true)){
         Engine.triggerHyperMode();
+      }
+
+      Engine.updateParticlesButton();
+      if (typeof Effects !== 'undefined' && Effects.updateIntensity) {
+        Effects.updateIntensity();
       }
 
       Engine.toggleVolume(Boolean($SM.get('config.soundOn')));
@@ -821,14 +845,32 @@
         enabled = !$SM.get('config.soundOn');
       }
       if (!enabled) {
-        $('.volume').text(_('sound on.'));
+        $('.volume').html('<i class="fa-solid fa-volume-high"></i> ' + _('sound on.'));
         $SM.set('config.soundOn', false);
         AudioEngine.setMasterVolume(0.0);
       } else {
-        $('.volume').text(_('sound off.'));
+        $('.volume').html('<i class="fa-solid fa-volume-xmark"></i> ' + _('sound off.'));
         $SM.set('config.soundOn', true);
         AudioEngine.setMasterVolume(1.0);
       }
+    },
+
+    updateParticlesButton: function(){
+      var lvl = $SM.get('config.particleIntensity', true);
+      if (lvl == null || lvl === undefined) lvl = 2;
+      var labels = ['off', 'low', 'med', 'high'];
+      $('.particles').html('<i class="fa-solid fa-wand-magic-sparkles"></i> ' + _('particles ' + labels[lvl] + '.'));
+    },
+
+    cycleParticles: function(){
+      var lvl = $SM.get('config.particleIntensity', true);
+      if (lvl == null || lvl === undefined) lvl = 2;
+      lvl = (lvl + 1) % 4;
+      $SM.set('config.particleIntensity', lvl);
+      if (typeof Effects !== 'undefined' && Effects.updateIntensity) {
+        Effects.updateIntensity();
+      }
+      Engine.updateParticlesButton();
     },
 
     setInterval: function(callback, interval, skipDouble){

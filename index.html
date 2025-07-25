@@ -46,10 +46,11 @@
 		}
 	</script>
 	
-	<script src="script/Button.js"></script>
-	<script src="script/audioLibrary.js"></script>
-	<script src="script/audio.js"></script>
-	<script src="script/engine.js"></script>
+        <script src="script/Button.js"></script>
+        <script src="script/audioLibrary.js"></script>
+        <script src="script/audio.js"></script>
+        <script src="script/effects.js"></script>
+        <script src="script/engine.js"></script>
 	<script src="script/state_manager.js"></script>
 	<script src="script/header.js"></script>
 	<script src="script/notifications.js"></script>
@@ -79,14 +80,17 @@
 		<script type="text/javascript">oldIE = true;</script> 
 	<![endif]-->
 	
-	<link rel="stylesheet" type="text/css" href="css/main.css" />
-	<link rel="stylesheet" type="text/css" href="css/room.css" />
-	<link rel="stylesheet" type="text/css" href="css/outside.css" />
-	<link rel="stylesheet" type="text/css" href="css/path.css" />
-	<link rel="stylesheet" type="text/css" href="css/world.css" />
-	<link rel="stylesheet" type="text/css" href="css/ship.css" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/main.css" />
+        <link rel="stylesheet" type="text/css" href="css/room.css" />
+        <link rel="stylesheet" type="text/css" href="css/outside.css" />
+        <link rel="stylesheet" type="text/css" href="css/path.css" />
+        <link rel="stylesheet" type="text/css" href="css/world.css" />
+        <link rel="stylesheet" type="text/css" href="css/ship.css" />
   <link rel="stylesheet" type="text/css" href="css/space.css" />
   <link rel="stylesheet" type="text/css" href="css/fabricator.css" />
+        <link rel="stylesheet" type="text/css" href="css/theme-modern.css" />
 	
 	<script src="script/localization.js"></script>
 	<!-- Google tag (gtag.js) -->
@@ -101,7 +105,8 @@
 	
 </head>
 <body>
-	<div id="wrapper">
+        <div id="background"></div>
+        <div id="wrapper">
 		<div id="saveNotify"><script>document.write(_("saved."));</script></div>
 		<div id="content">
 			<div id="outerSlider">

@@ -577,8 +577,11 @@ var Outside = {
 		$('#location_outside').text(title);
 	},
 	
-	onArrival: function(transition_diff) {
-		Outside.setTitle();
+       onArrival: function(transition_diff) {
+                if (typeof Effects !== 'undefined') {
+                        Effects.setScene('forest');
+                }
+                Outside.setTitle();
 		if(!$SM.get('game.outside.seenForest')) {
 			Notifications.notify(Outside, _("the sky is grey and the wind blows relentlessly"));
 			$SM.set('game.outside.seenForest', true);
@@ -605,12 +608,15 @@ var Outside = {
 		}
 	},
 	
-	gatherWood: function() {
-		Notifications.notify(Outside, _("dry brush and dead branches litter the forest floor"));
-		var gatherAmt = $SM.get('game.buildings["cart"]', true) > 0 ? 50 : 10;
-		$SM.add('stores.wood', gatherAmt);
-		AudioEngine.playSound(AudioLibrary.GATHER_WOOD);
-	},
+        gatherWood: function() {
+                Notifications.notify(Outside, _("dry brush and dead branches litter the forest floor"));
+                var gatherAmt = $SM.get('game.buildings["cart"]', true) > 0 ? 50 : 10;
+                $SM.add('stores.wood', gatherAmt);
+                AudioEngine.playSound(AudioLibrary.GATHER_WOOD);
+                if (typeof Effects !== 'undefined') {
+                        Effects.sparkBurst();
+                }
+        },
 	
 	checkTraps: function() {
 		var drops = {};
